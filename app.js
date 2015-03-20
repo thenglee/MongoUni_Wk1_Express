@@ -4,16 +4,17 @@ var express = require('express'),
 	MongoClient = require('mongodb').MongoClient,
 	Server = require('mongodb').Server;
 
-app.engine('html', cons.swig); //Swig template engine integrated with Express using consolidate
-app.set('view engine', 'html'); //Set view engine for express to be html
-app.set('views', __dirname + '/views'); //Set directory to look for views
-
 //Create object to set up connection information
 var mongoclient = new MongoClient(new Server('localhost', 27017,
 												{ 'native_parser' : true }));
 //Set reference to db, no connection yet
 var db = mongoclient.db('demo');
 
+
+app.engine('html', cons.swig); //Swig template engine integrated with Express using consolidate
+app.set('view engine', 'html'); //Set view engine for express to be html
+app.set('views', __dirname + '/views'); //Set directory to look for views
+//app.use(app.router);
 
 
 app.get('/', function(req, res){
@@ -22,6 +23,17 @@ app.get('/', function(req, res){
 		res.render('hello', doc); //Look for hello.html page and pass in document
 	});
 });
+
+app.get('/:name', function(req, res, next){
+	var name = "", 
+		getvar1 = "", 
+		getvar2 = "";
+	name = req.params.name;
+	getvar1 = req.query.getvar1;
+	getvar2 = req.query.getvar2;
+	res.render('hello', { name: name, getvar1: getvar1, getvar2 : getvar2 });
+});
+
 
 app.get('*', function(req, res){
 	res.send("Page not found", 404);
